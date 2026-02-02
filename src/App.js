@@ -8,6 +8,7 @@ function App() {
   const [annualIncome, setAnnualIncome] = useState('');
   const [tax, setTax] = useState(null);
 
+  // handling api states - error / loading
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -15,9 +16,13 @@ function App() {
     let totalTax = 0;
 
     for (const bracket of brackets) {
+      // income should be greater than bracket min otherwise break unnecesary loop
       if (income <= bracket.min) break;
 
+      // case 1: it has max
+      // case 2: it doesn't have max, so it will be income
       const upperLimit = bracket.max ?? income;
+      // don't tax more than you earned then substract to tax the portion inside this bracket
       const taxableAmount = Math.min(income, upperLimit) - bracket.min;
 
       totalTax += taxableAmount * bracket.rate;
@@ -92,10 +97,16 @@ function App() {
 
       {
         tax !== null && (
-          <p>
-            Effective tax rate: {" "}
-            <strong>{((tax / annualIncome) * 100).toFixed(2)}%</strong>
-          </p>
+          <>
+            <p>
+              Total tax owed: {" "}
+              <strong>${tax.toFixed(2)}</strong>
+            </p>
+            <p>
+              Effective tax rate: {" "}
+              <strong>{((tax / annualIncome) * 100).toFixed(2)}%</strong>
+            </p>
+          </>
         )
       }
     </div>
